@@ -65,7 +65,7 @@ TDE with BYOK support is a security capability that is built into Azure SQL Data
 - Key rollovers
 - Every 6 hours to check if any changes have been made to the server’s permissions to the key vault
 
-## Important warnings
+# Important warnings
 
 ### Loss of access to keys
 
@@ -76,7 +76,6 @@ Once a server no longer has access to the TDE Protector (either by removed Key V
 Because the TDE Protector’s availability directly impacts database availability, a key with an expiration date is not allowed to be added to a SQL server. If a key is already used as a TDE Protector for a server, and is later added an expiration date in Azure Key Vault, **once the key becomes expired, the encrypted databases no longer have access to their TDE Protector and are dropped within 24 hours.**
 
 ### Deleted server identities 
-
 A server's access to Key Vault is managed through the server's unique Azure Active Directory (AAD) identity. Therefore, if the server's identity is deleted from AAD, the server loses access to its key vaults. As a result, **all connections to the encrypted databases under the server are blocked, and these databases go offline and get dropped within 24 hours.**
 
 ## Limitations
@@ -86,7 +85,6 @@ Key vaults being used for TDE must be in the same AAD tenant as the SQL Database
 Unique TDE Protectors for a database or data warehouse are not supported. The TDE Protector is set on the server-level, and inherited by all resources under the server. 
 
 ## Guidelines for managing encrypted databases
-
 ### High availability and disaster recovery
   
 There are two ways geo-replication can be configured for servers using Key Vault: 
@@ -109,7 +107,7 @@ To get started, use the [Add-AzureRmSqlServerKeyVaultKey](/powershell/module/azu
 >[!NOTE]
 >The combined character length of the key vault name and the key name cannot exceed 94 characters.
 >
-
+C
 Follow the steps in [Active geo-replication overview](https://docs.microsoft.com/azure/sql-database/sql-database-geo-replication-overview) to configure active geo-replication with these servers and to trigger a failover.  
 
 ### Backup and restore
@@ -136,7 +134,7 @@ To learn more about backup recovery for SQL Database, see [Recover an Azure SQL 
 
 To ensure quick key recovery and access your data outside of Azure, we recommend the following:
 - Create your encryption key locally on a local HSM device. (Make sure this is an asymmetric, RSA 2048 key so it is storable in Azure Key Vault.)
-- Import the encryption key file (.pfx, .byok, or .backup) to Azure Key Vault. 
+- Import the encryption key file (.pfx, .byok, or .backup) to Azure Key Vault. Consider using a key vault with [soft-delete](https://docs.microsoft.com/azure/key-vault/key-vault-ovw-soft-delete) enabled, for recovery protection from accidental key deletions. 
 - Before using the key in Azure Key Vault for the first time, take an Azure Key Vault key backup. Learn more about the [Backup-AzureKeyVaultKey](https://msdn.microsoft.com/library/mt126292.aspx) command.
 - Whenever any changes are made to the key (for example, add ACLs, add tags, add key attributes), be sure to take another Azure Key Vault key backup.
 - During a key rollover, **keep previous versions of the key** in the key vault so older database backups can be restored. 
